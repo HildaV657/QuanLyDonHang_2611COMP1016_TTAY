@@ -10,18 +10,12 @@ const int VI_TRI_USER = 0;
 const int VI_TRI_PASSWORD = 1;
 
 Admin::Admin(const string& strUser, const string& strPassword)
-    : _strUser(strUser), _strPassword(strPassword)
-{
-}
+    : _strUser(strUser), _strPassword(strPassword) {}
 
 Admin::Admin(const Admin& admin)
-    : _strUser(admin._strUser), _strPassword(admin._strPassword)
-{
-}
+    : _strUser(admin._strUser), _strPassword(admin._strPassword) {}
 
-Admin::~Admin()
-{
-}
+Admin::~Admin() {}
 
 string Admin::getUser() const
 {
