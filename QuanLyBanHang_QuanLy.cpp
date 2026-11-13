@@ -1,180 +1,223 @@
-#include "QuanLyBanHang.h"
-#include "TienIch.h"
-
 #include <iostream>
 #include <string>
 
+#include "QuanLyBanHang.h"
+#include "TienIch.h"
+
 using namespace std;
 
-const int SO_LAN_DANG_NHAP_TOI_DA = 3;
-
-void QuanLyBanHang::quanLy()
+namespace
 {
-    if (this->dangNhap())
-    {
-        this->menuQuanLy();
-    }
+	const int SO_LAN_DANG_NHAP_TOI_DA = 3;
+
+	/**********************************************************
+	* @Description In khung đăng nhập hệ thống
+	**********************************************************/
+	void hienThiManHinhDangNhap()
+	{
+		TienIch::xoaManHinh();
+		TienIch::inThongBao("  * * * * * * * * * * * * * * * * * * * * *", MAU_VANG);
+		TienIch::inThongBao("  *          DANG NHAP HE THONG           *", MAU_XANH_LA);
+		TienIch::inThongBao("  * * * * * * * * * * * * * * * * * * * * *", MAU_VANG);
+		TienIch::inThongBao("  (Nhấn ESC để thoát)\n", MAU_MAC_DINH);
+	}
+
+	/**********************************************************
+	* @Description Nhập user (hiện chữ) và password (hiện dấu *)
+	*
+	* @return false nếu người dùng nhấn ESC
+	**********************************************************/
+	bool nhapTaiKhoan(string& strUser, string& strPassword)
+	{
+		TienIch::datMau(MAU_XANH_LA);
+		cout << "    User: ";
+		TienIch::datMau(MAU_TRANG);
+		if (!TienIch::docPhim(strUser, false))
+		{
+			return false;
+		}
+		TienIch::datMau(MAU_XANH_LA);
+		cout << "    Password: ";
+		TienIch::datMau(MAU_TRANG);
+		if (!TienIch::docPhim(strPassword, true))
+		{
+			return false;
+		}
+		TienIch::datMau(MAU_MAC_DINH);
+		return true;
+	}
 }
 
 /**********************************************************
-* @Description Màn hình đăng nhập quản lý
+* @Description Chức năng Quản lý: phải đăng nhập thành công mới vào
+*              được menu quản lý
+**********************************************************/
+void QuanLyBanHang::quanLy()
+{
+	if (this->dangNhap())
+	{
+		this->menuQuanLy();
+	}
+}
+
+/**********************************************************
+* @Description Đăng nhập nhân viên, tối đa 3 lần
 *
 * @return true nếu đăng nhập thành công
-* @attention Trả về false và dừng chương trình nếu nhấn ESC
-*            hoặc nhập sai quá SO_LAN_DANG_NHAP_TOI_DA lần
+* @attention Nhập sai 3 lần hoặc nhấn ESC thì kết thúc chương trình
 **********************************************************/
 bool QuanLyBanHang::dangNhap()
 {
-    for (int iLanThu = 1; iLanThu <= SO_LAN_DANG_NHAP_TOI_DA; ++iLanThu)
-    {
-        TienIch::xoaManHinh();
-        TienIch::inThongBao("  * * * * * * * * * * * * * * * * * * * * *", MAU_VANG);
-        TienIch::inThongBao("  *          ĐĂNG NHẬP HỆ THỐNG           *", MAU_XANH_LA);
-        TienIch::inThongBao("  * * * * * * * * * * * * * * * * * * * * *", MAU_VANG);
-        TienIch::inThongBao("  (Nhấn ESC để thoát)\n", MAU_MAC_DINH);
-
-        string strUser;
-        string strPass;
-
-        TienIch::datMau(MAU_XANH_LA);
-        cout << "    User: ";
-        TienIch::datMau(MAU_TRANG);
-        if (!TienIch::docPhim(strUser, false))
-        {
-            this->_bDangChay = false;
-            return false;
-        }
-
-        TienIch::datMau(MAU_XANH_LA);
-        cout << "    Password: ";
-        TienIch::datMau(MAU_TRANG);
-        if (!TienIch::docPhim(strPass, true))
-        {
-            this->_bDangChay = false;
-            return false;
-        }
-        TienIch::datMau(MAU_MAC_DINH);
-
-        for (int iViTri = 0; iViTri < this->_dsAdmin.getSize(); ++iViTri)
-        {
-            Admin admin = this->_dsAdmin.get(iViTri);
-            if (admin.kiemTra(strUser, strPass))
-            {
-                return true;
-            }
-        }
-
-        TienIch::inLoi("Sai user hoặc password (lần " + to_string(iLanThu) + "/" + to_string(SO_LAN_DANG_NHAP_TOI_DA) + ").");
-        TienIch::tamDung();
-    }
-
-    TienIch::inLoi("Nhập sai " + to_string(SO_LAN_DANG_NHAP_TOI_DA) + " lần. Thoát khỏi hệ thống");
-    this->_bDangChay = false;
-    return false;
+	for (int iLanThu = 1; iLanThu <= SO_LAN_DANG_NHAP_TOI_DA; ++iLanThu)
+	{
+		hienThiManHinhDangNhap();
+		string strUser;
+		string strPassword;
+		if (!nhapTaiKhoan(strUser, strPassword))
+		{
+			this->m_bDangChay = false;
+			return false;
+		}
+		if (this->kiemTraTaiKhoan(strUser, strPassword))
+		{
+			return true;
+		}
+		TienIch::inLoi("Sai user hoặc password (lần " + to_string(iLanThu) + "/"
+			+ to_string(SO_LAN_DANG_NHAP_TOI_DA) + ").");
+		TienIch::tamDung();
+	}
+	TienIch::inLoi("Nhập sai " + to_string(SO_LAN_DANG_NHAP_TOI_DA) + " lần. Thoát khỏi hệ thống.");
+	this->m_bDangChay = false;
+	return false;
 }
 
+/**********************************************************
+* @Description Kiểm tra user và password có tồn tại trong Admin.txt không
+*
+* @return true nếu khớp một tài khoản
+**********************************************************/
+bool QuanLyBanHang::kiemTraTaiKhoan(const string& strUser, const string& strPassword) const
+{
+	const Admin* pAdmin = this->m_danhSachAdmin.timDau([&strUser, &strPassword](const Admin& admin)
+	{
+		return admin.kiemTra(strUser, strPassword);
+	});
+	return pAdmin != nullptr;
+}
+
+/**********************************************************
+* @Description Menu quản lý: xử lý đơn hàng hoặc quản lý hàng hóa
+**********************************************************/
 void QuanLyBanHang::menuQuanLy()
 {
-    bool bTiepTuc = true;
-    while (bTiepTuc)
-    {
-        TienIch::xoaManHinh();
-        TienIch::inThongBao("=== MENU QUẢN LÝ ===", MAU_VANG);
-        TienIch::inThongBao("  1. Xử lý đơn hàng (" + to_string(this->_hangDoiChoXuLy.getSize()) + " đơn đang chờ)", MAU_TRANG);
-        TienIch::inThongBao("  2. Quản lý hàng hóa", MAU_TRANG);
-        TienIch::inThongBao("  0. Quay lại menu chính", MAU_TRANG);
-
-        string strLuaChon = TienIch::docLuaChon("Chọn chức năng: ");
-
-        char cLuaChon = (strLuaChon.size() == 1) ? strLuaChon[0] : '\0';
-        switch (cLuaChon)
-        {
-        case '1':
-            this->xuLyDonHang();
-            TienIch::tamDung();
-            break;
-        case '2':
-            this->menuQuanLyHangHoa();
-            break;
-        case '0':
-            bTiepTuc = false;
-            break;
-        default:
-            TienIch::inLoi("Lựa chọn không hợp lệ!");
-            TienIch::tamDung();
-            break;
-        }
-    }
+	bool bTiepTuc = true;
+	while (bTiepTuc)
+	{
+		TienIch::xoaManHinh();
+		TienIch::inThongBao("=== MENU QUẢN LÝ ===", MAU_VANG);
+		TienIch::inThongBao("  1. Xử lý đơn hàng (" + to_string(this->m_hangDoiChoXuLy.getSize()) + " đơn đang chờ)", MAU_TRANG);
+		TienIch::inThongBao("  2. Quản lý hàng hóa", MAU_TRANG);
+		TienIch::inThongBao("  0. Quay lại menu chính", MAU_TRANG);
+		const string strLuaChon = TienIch::docLuaChon("Chọn chức năng: ");
+		const char cLuaChon = (strLuaChon.size() == 1) ? strLuaChon[0] : '\0';
+		switch (cLuaChon)
+		{
+			case '1':
+				this->xuLyDonHang();
+				TienIch::tamDung();
+				break;
+			case '2':
+				this->menuQuanLyHangHoa();
+				break;
+			case '0':
+				bTiepTuc = false;
+				break;
+			default:
+				TienIch::inLoi("Lựa chọn không hợp lệ.");
+				TienIch::tamDung();
+				break;
+		}
+	}
 }
 
 /**********************************************************
 * @Description Kiểm tra kho có đủ hàng cho toàn bộ đơn hàng không
 *
-* @return true nếu mọi mặt hàng đều tồn tại và đủ số lượng
+* @return true nếu mọi mã hàng đều còn tồn tại và đủ số lượng
 **********************************************************/
-bool QuanLyBanHang::kiemTraDuHang(CDonHang& donHang)
+bool QuanLyBanHang::kiemTraDuHang(const DonHang& donHang) const
 {
-    const DanhSach<ChiTietDon>& dsChiTiet = donHang.getDanhSachChiTiet();
-    for (int iViTri = 0; iViTri < dsChiTiet.getSize(); ++iViTri)
-    {
-        CChiTietDon chiTiet = dsChiTiet.get(iViTri);
-        HangHoa* pHangHoa = this->timHangHoa(chiTiet.getMaHang());
-        if (pHangHoa == nullptr || pHangHoa->getSoLuong() < chiTiet.getSoLuong())
-        {
-            return false;
-        }
-    }
-    return true;
+	bool bDuHang = true;
+	donHang.getDanhSachChiTiet().duyet([this, &bDuHang](const ChiTietDon& chiTiet)
+	{
+		const HangHoa* pHangHoa = this->timHangHoa(chiTiet.getMaHang());
+		if (pHangHoa == nullptr || pHangHoa->getSoLuong() < chiTiet.getSoLuong())
+		{
+			bDuHang = false;
+		}
+	});
+	return bDuHang;
 }
 
 /**********************************************************
-* @Description Xử lý đơn hàng đầu hàng đợi: trừ kho nếu đủ hàng,
-*              ngược lại hủy đơn
+* @Description Xử lý đơn hàng đặt sớm nhất (đầu hàng đợi, FIFO) rồi bỏ
+*              khỏi hàng đợi
 *
-* @attention Ghi lại file hàng hóa và file đơn hàng sau khi xử lý
+* @attention Đủ hàng thì trừ kho, thiếu hàng thì hủy đơn. Ghi lại cả
+*            hai file hàng hóa và đơn hàng
 **********************************************************/
 void QuanLyBanHang::xuLyDonHang()
 {
-    TienIch::xoaManHinh();
-    TienIch::inThongBao("=== XỬ LÝ ĐƠN HÀNG ===", MAU_VANG);
-    if (this->_hangDoiChoXuLy.isEmpty())
-    {
-        TienIch::inThongBao("Không có đơn hàng nào đang chờ xử lý!", MAU_DO);
-        return;
-    }
+	TienIch::xoaManHinh();
+	TienIch::inThongBao("=== XỬ LÝ ĐƠN HÀNG ===", MAU_VANG);
+	if (this->m_hangDoiChoXuLy.isEmpty())
+	{
+		TienIch::inThongBao("Không có đơn hàng nào đang chờ xử lý.", MAU_DO);
+		return;
+	}
+	DonHang* pDonHang = this->timDonHang(*this->m_hangDoiChoXuLy.front());
+	this->m_hangDoiChoXuLy.dequeue();
+	if (pDonHang == nullptr)
+	{
+		TienIch::inLoi("Không tìm thấy dữ liệu đơn hàng.");
+		return;
+	}
+	if (this->kiemTraDuHang(*pDonHang))
+	{
+		this->hoanTatDonHang(*pDonHang);
+	}
+	else
+	{
+		this->huyDonHang(*pDonHang);
+	}
+	this->ghiFileHangHoa();
+	this->ghiFileDonHang();
+}
 
-    DonHang* pDonHang = this->timDonHang(this->_hangDoiChoXuLy.front());
-    this->_hangDoiChoXuLy.dequeue();
-    if (pDonHang == nullptr)
-    {
-        TienIch::inLoi("Không tìm thấy dữ liệu đơn hàng!");
-        return;
-    }
+/**********************************************************
+* @Description Trừ số lượng hàng trong kho theo đơn và chuyển đơn sang
+*              trạng thái đã xử lý
+*
+* @attention Chỉ gọi sau khi kiemTraDuHang trả về true
+**********************************************************/
+void QuanLyBanHang::hoanTatDonHang(DonHang& donHang)
+{
+	donHang.getDanhSachChiTiet().duyet([this](const ChiTietDon& chiTiet)
+	{
+		HangHoa* pHangHoa = this->timHangHoa(chiTiet.getMaHang());
+		pHangHoa->setSoLuong(pHangHoa->getSoLuong() - chiTiet.getSoLuong());
+	});
+	donHang.setTrangThai(DA_XU_LY);
+	donHang.hienThi();
+	TienIch::inThongBao("Đã xử lý xong đơn hàng và cập nhật số lượng hàng hóa.", MAU_XANH_LA);
+}
 
-    if (this->kiemTraDuHang(*pDonHang))
-    {
-        const DanhSach<ChiTietDon>& dsChiTiet = pDonHang->getDanhSachChiTiet();
-        for (int iViTri = 0; iViTri < dsChiTiet.getSize(); ++iViTri)
-        {
-            CChiTietDon chiTiet = dsChiTiet.get(iViTri);
-            HangHoa* pHangHoa = this->timHangHoa(chiTiet.getMaHang());
-            if (pHangHoa != nullptr)
-            {
-                int iSoLuongConLai = pHangHoa->getSoLuong() - chiTiet.getSoLuong();
-                pHangHoa->setSoLuong(iSoLuongConLai);
-            }
-        }
-        pDonHang->setTrangThai(DA_XU_LY);
-        pDonHang->hienThi();
-        TienIch::inThongBao("Đã xử lý xong đơn hàng và cập nhật số lượng hàng hóa!", MAU_XANH_LA);
-    }
-    else
-    {
-        pDonHang->setTrangThai(DA_HUY);
-        pDonHang->hienThi();
-        TienIch::inLoi("Không đủ hàng hoặc mã hàng đã bị xóa, đơn hàng bị hủy!");
-    }
-
-    this->ghiFileHangHoa();
-    this->ghiFileDonHang();
+/**********************************************************
+* @Description Hủy đơn hàng vì không đủ hàng và báo cho nhân viên
+**********************************************************/
+void QuanLyBanHang::huyDonHang(DonHang& donHang)
+{
+	donHang.setTrangThai(DA_HUY);
+	donHang.hienThi();
+	TienIch::inLoi("Không đủ hàng hoặc mã hàng đã bị xóa, đơn hàng bị hủy.");
 }

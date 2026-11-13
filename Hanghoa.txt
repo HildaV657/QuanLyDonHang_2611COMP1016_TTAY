@@ -1,0 +1,5 @@
+H001|Laptop Dell Inspiron 15|My|Bac|15990000|05/03/2026|8
+H002|Dien thoai Samsung Galaxy A55|Han Quoc|Xanh|9490000|12/04/2026|25
+H003|Tai nghe Sony WH-1000XM5|Nhat Ban|Den|6990000|20/01/2026|0
+H004|Chuot Logitech MX Master 3S|Thuy Si|Xam|2190000|15/02/2026|40
+H005|Ban phim co Keychron K2|Trung Quoc|Trang|1890000|01/06/2026|15

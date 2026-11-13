@@ -5,7 +5,7 @@
 
 using namespace std;
 
-const int SO_TRUONG_HANG_HOA = 7;  // 7 trường thông tin: Ma, Ten, NoiSX, MauSac, Gia, NgayNhap, SoLuong
+const size_t SO_TRUONG_HANG_HOA = 7;  // 7 trường thông tin: Ma, Ten, NoiSX, MauSac, Gia, NgayNhap, SoLuong
 
 HangHoa::HangHoa()
 {
@@ -16,9 +16,16 @@ HangHoa::HangHoa()
 HangHoa::HangHoa(const string& strMaHang, const string& strTenHang,
     const string& strNoiSanXuat, const string& strMauSac,
     const long long lGiaBan, const string& strNgayNhapKho, const int iSoLuong)
-    : m_strMaHang(strMaHang), m_strTenHang(strTenHang), m_strNoiSanXuat(strNoiSanXuat),
-    m_strMauSac(strMauSac), m_lGiaBan(lGiaBan), m_strNgayNhapKho(strNgayNhapKho), m_iSoLuong(iSoLuong)
+    : _strMaHang(strMaHang), _strTenHang(strTenHang), _strNoiSanXuat(strNoiSanXuat),
+    _strMauSac(strMauSac), _lGiaBan(lGiaBan), _strNgayNhapKho(strNgayNhapKho), _iSoLuong(iSoLuong)
 {}
+
+HangHoa::HangHoa(const HangHoa& hangHoa)
+    : _strMaHang(hangHoa._strMaHang), _strTenHang(hangHoa._strTenHang), _strNoiSanXuat(hangHoa._strNoiSanXuat),
+    _strMauSac(hangHoa._strMauSac), _lGiaBan(hangHoa._lGiaBan), _strNgayNhapKho(hangHoa._strNgayNhapKho), _iSoLuong(hangHoa._iSoLuong)
+{}
+
+HangHoa::~HangHoa() {}
 
 string HangHoa::getMaHang() const
 {
@@ -101,16 +108,4 @@ void HangHoa::hienThi() const
         << TienIch::canTrai(TienIch::dinhDangTien(this->_lGiaBan), 14)
         << TienIch::canTrai(this->_strNgayNhapKho, 12)
         << this->_iSoLuong << endl;
-}
-
-void CQuanLyBanHang::hienThiMenuChinh() const
-{
-    TienIch::xoaManHinh();
-    TienIch::inThongBao("********** WEBSITE BÁN HÀNG ONLINE **********", MAU_VANG);
-    TienIch::inThongBao("  1. Hiển thị thông tin hàng hóa", MAU_TRANG);
-    TienIch::inThongBao("  2. Tìm kiếm thông tin hàng hóa", MAU_TRANG);
-    TienIch::inThongBao("  3. Đặt hàng", MAU_TRANG);
-    TienIch::inThongBao("  4. Quản lý", MAU_TRANG);
-    TienIch::inThongBao("  0. Thoát chương trình", MAU_TRANG);
-    TienIch::inThongBao("*********************************************", MAU_VANG);
 }

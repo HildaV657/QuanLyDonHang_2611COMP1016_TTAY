@@ -16,6 +16,7 @@ private:
     int _iSoLuong;
 
 public:
+    HangHoa();
     HangHoa(const string& strMaHang, const string& strTenHang,
         const string& strNoiSanXuat, const string& strMauSac,
         const long long lGiaBan, const string& strNgayNhapKho, const int iSoLuong);

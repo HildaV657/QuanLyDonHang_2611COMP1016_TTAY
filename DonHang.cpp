@@ -1,4 +1,3 @@
-
 #include "DonHang.h"
 #include "TienIch.h"
 
@@ -23,7 +22,7 @@ DonHang::DonHang()
 
 DonHang::DonHang(int soThuTu, TrangThaiDon trangThai, const string& tenKhach, const string& diaChi, const string& soDienThoai, const string& ngayDat, long long tongTien)
 {
-    _strSoThuTu = soThuTu;
+    _iSoThuTu = soThuTu;
     _eTrangThai = trangThai;
 
     _strTenKhach = tenKhach;
@@ -38,7 +37,7 @@ DonHang::~DonHang(){}
 
 int DonHang::getSoThuTu() const
 {
-    return _strSoThuTu;
+    return _iSoThuTu;
 }
 
 TrangThaiDon DonHang::getTrangThai() const
@@ -80,7 +79,7 @@ void DonHang::setSoThuTu(int soThuTu)
 {
     if (soThuTu >= 0)
     {
-        _strSoThuTu = soThuTu;
+        _iSoThuTu = soThuTu;
     }
 }
 
@@ -151,7 +150,7 @@ string DonHang::chuyenThanhDong() const
 {
     string strDong = "";
 
-    strDong = to_string(_strSoThuTu)
+    strDong = to_string(_iSoThuTu)
         + DAU_NGAN_CACH
         + to_string(static_cast<int>(_eTrangThai))
         + DAU_NGAN_CACH
@@ -248,7 +247,7 @@ bool DonHang::docTuDong(const string& strDong)
             return false;
         }
 
-        _strSoThuTu = soThuTu;
+        _iSoThuTu = soThuTu;
 
         _eTrangThai = static_cast<TrangThaiDon>(trangThai);
 
@@ -286,7 +285,7 @@ void DonHang::hienThi() const
 
     TienIch::datMau(MAU_XANH_DUONG);
 
-    cout << "Đơn hàng số " << _strSoThuTu << " - " << strTrangThai << endl;
+    cout << "Đơn hàng số " << _iSoThuTu << " - " << strTrangThai << endl;
 
     TienIch::datMau(MAU_MAC_DINH);
 
@@ -304,4 +303,3 @@ void DonHang::hienThi() const
 
     cout << "Tổng tiền  : " << TienIch::dinhDangTien(_lTongTien) << endl;
 }
-

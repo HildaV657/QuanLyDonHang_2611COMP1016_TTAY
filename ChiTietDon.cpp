@@ -2,16 +2,16 @@
 
 ChiTietDon::ChiTietDon()
 {
-    _strMaHang="";
-    _iSoLuong=0;
-    _lThanhTien=0;
+    _strMaHang = "";
+    _iSoLuong = 0;
+    _lThanhTien = 0;
 }
 
 ChiTietDon::ChiTietDon(string maHang, int soLuong, long long thanhTien)
 {
-    _strMaHang=maHang;
-    _iSoLuong=soLuong;
-    _lThanhTien=thanhTien;
+    _strMaHang = maHang;
+    _iSoLuong = soLuong;
+    _lThanhTien = thanhTien;
 }
 
 ChiTietDon::~ChiTietDon(){};
